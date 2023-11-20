@@ -20,12 +20,12 @@ if not os.path.exists(f'{Output_dir}'):
 if ObsFormat=='TXT':
     PhaseFiles = ascii.read(ObsPath + 'ObsDat.txt')
     MJDs = PhaseFiles['MJD']
-    specnames = PhaseFiles['obsname']
+    specnames = np.array([ObsPath + name for name in PhaseFiles['obsname']])
 elif ObsFormat=='FITS':
     specnames = glob.glob(ObsPath+ '/*.fits')
     MJDs = np.array([])
-    
-    
+
+
 ############################################################
 ####### Starts code -- don't touch unless necessary! #######
 ############################################################
