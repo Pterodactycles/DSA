@@ -8,7 +8,10 @@
 # Coming up in upcoming versions: Quadruples and nebular contamination. 
 
 from Input_disentangle import *
-from Disentangling.disentangle_functions import * 
+from Disentangling.disentangle_functions import *
+
+if not os.path.exists(f'{Output_dir}'):
+    os.mkdir(f'{Output_dir}')
 
 ##################################################################
 ####### READING OF DATA --- USER POTENTIALLY NEEDS TO EDIT #######
@@ -169,12 +172,8 @@ else:
 
 
 
-
-if not os.path.exists('Output/'):
-    os.mkdir('Output/')
-
 # Run main disentangling routine
-if GridDis:
+if GridDis == True:
 # Compute RVs for comp1, comp2    
 # Compute RVs for comp1, comp2      
    vrads1, vrads2 = v1andv2(nusdata, Orbital_Params)     

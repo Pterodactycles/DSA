@@ -6,18 +6,35 @@
 
 
 import numpy as np
+import json
+import argparse
 
 
 ###############################
 ##### STAR AND DATA INFO ######
 ###############################
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-s", "--system", help="Name of the system")
+parser.add_argument("-rv", "--find_rv", help="Whether or not to find the radial velocity, boolean")
+parser.add_argument("-o", "--order", help="Helps pick predefined values from dictionaries below.")
+args = parser.parse_args()
 
-# Name of object (just for file names)
-StarName = 'Test'
+### Name of object (just for file names)
+StarName = args.system or input("System: ")
+find_rv = bool(args.find_rv)
+Order = f"order_{args.order}"
+
 
 # Path to data (folder where all spectra are stored):
-ObsPath = 'obs/'
+# ObsPath = f'/home/users/cmb255/DBiSS/data/{StarName}/ordered/{Order}/'
+ObsPath = '/home/users/cmb255/DBiSS/4950_4965/'
+
+# Output_dir = f'/home/users/cmb255/DeBiSS/data/{StarName}/disentangled'
+Output_dir = "/home/users/cmb255/DBiSS/disentangled"
+
+### JSON PATH
+json_file = f'/home/users/cmb255/DBiSS/data/orbital_parameters.json'
 
 ### Type of data format. There are two options:
 ### OPTION 1: ObsFormat = 'TXT' 
@@ -79,11 +96,16 @@ Orbital_Params = {
     'K3' : 0. ,
     'K4' : 0.}
 
+### SUCH DATA IS PLACED IN A JSON FILE AND RETRIEVED BASED ON THE SYSTEM NAME, FOR CONVENIENCE
+with open(json_file) as file:
+    data = json.load(file)
+Orbital_Params = data[f'{StarName}']
+print(Orbital_Params)
 
 
 # MUST INTRODUCE COMPNUM TO AVOID FUNNY RATIOS!
 # Vector of light ratios, [l2, l3, l4], i.e. flux_i / sum(flux). Assumed constant throughout range.
-lguessVec = [0.3, 0.3, 0.] 
+lguessVec = [0.5, 0., 0.] 
 
 if CompNum==2:    
     lguess1 = 1.-lguessVec[0]
@@ -95,8 +117,43 @@ elif CompNum==4:
 
 
 #Where to measure S2N, only important for  defining continuum and weighting of spectra when co-adding (not critical)
-S2Nblue = 4155
-S2Nred = 4165
+continuumdictionary = {
+    "order_11" : {
+        "S2Nblue" : 653.7,
+        "S2Nred" : 654.2
+    },
+    "order_21" : {
+        "S2Nblue" : 582,
+        "S2Nred" : 584
+    },
+    "order_28" : {
+        "S2Nblue" : 544.9,
+        "S2Nred" : 545.4
+    },
+    "order_29" : {
+        "S2Nblue" : 543.7,
+        "S2Nred" : 544.3
+    },
+    "order_30" : {
+        "S2Nblue" : 535.5,
+        "S2Nred" : 536.1
+    },
+    "order_34" : {
+        "S2Nblue" : 514,
+        "S2Nred" : 516
+    },
+    "order_39" : {
+        "S2Nblue" : 495.5,
+        "S2Nred" : 496
+    },
+    "order_51" : {
+        "S2Nblue" : 448,
+        "S2Nred" : 450
+    }
+}
+
+S2Nblue = continuumdictionary[Order]["S2Nblue"]
+S2Nred = continuumdictionary[Order]["S2Nred"]
 
 
 
@@ -241,7 +298,7 @@ N_Iteration_Plot = 100
 # Type of interpolation in interp1d (see python doc for options);
 # 'linear' can lead to artificial increase of S/N due to interpolation
 # 'cubic' performs better, but is slower. 
-InterKind='linear'         
+InterKind='cubic'
 
 # Region for fitting parabola of chi2 in index steps from minimum
 ParbSize=2
@@ -262,7 +319,6 @@ ParbSize=2
 # The reduction depends on K1, K2; the user should judge (e.g., using "PLOTEXTREMES") that the lines are well covered and reach continuum at both edges.
 # Ideally, disentangled region should be line-dominated (to enhance the signal on chi2), but certainly reach continuum at the edges.
 
-
 #Rangestr = 'Hdelta'
 #Rangestr = 'Hgamma'
 #Rangestr = 'Hbeta'
@@ -270,7 +326,7 @@ ParbSize=2
 #Rangestr = 'Balmer'
 #Rangestr = 'Balmer_noHalpha'
 #Rangestr = 'HeI'
-Rangestr = 'HeI4472'
+# Rangestr = 'HeI4472'
 #Rangestr = 'HeI4122'
 #Rangestr = 'HeI4009'
 #Rangestr = 'HeI4026'
@@ -296,106 +352,122 @@ Rangestr = 'HeI4472'
 #Rangestr = 'AllHeII'
 #Rangestr = 'AllHe'
 #Rangestr = 'Indiv'
+Rangestr = 'specific'
 
 ##### Define ranges corresponding too the strings above.... CHANGE IF NEEDED
-
-RangeHa = [6553, 6570.]
-RangeHb = [4840, 4877.]
-RangeHg = [4310., 4370.]
-RangeHd = [4070, 4140.]
-RangeHeI5878 = [5869., 5881.]
-RangeHeI4472 = [4455., 4490.]
-RangeHeI4144 = [4120., 4170.]
-RangeOIIIJulia = [7760., 7785.]
-RangeFe4584 = [4580, 4588]
-RangeFe4584 = [4580, 4586]
-RangeFe5168 = [5162, 5174]
-RangeFe5192 = [5190., 5205]
-RangeFe5234 = [5230., 5240]
-RangeFe5275 = [5268, 5282.]
-RangeFe5316 = [5310., 5322.]
-RangeFe5362 = [5358., 5367.]
-RangeOIII8446 = [8438., 8455.]
-RangeHI8367 = [8367., 8500.]
-RangeHeI4122 = [4115., 4127.]
-RangeHeI4009 = [4003., 4018.]
-RangeHeI4026 = [4000., 4050.]
-RangeHeI4388 = [4365, 4410.]
-RangeHeII4545 = [4515., 4565.]
-RangeHeII4200 = [4185., 4215.]
+waveranges = {
+    "RangeHa" : [655.3, 657.0],
+    "RangeHb" : [484.0, 487.7],
+    "RangeHg" : [431.0, 437.0],
+    "RangeHd" : [407.0, 414.0],
+    "RangeHeI5878" : [586.9,588.1],
+    "RangeHeI4472" : [445.7,448.9],
+    "RangeHeI4144" : [412.0,417.0],
+    "RangeOIIIJulia" : [776.0,778.5],
+    "RangeFe4584" : [458.0,458.8],
+    "RangeFe4584" : [458.0,458.6],
+    "RangeFe5168" : [516.2,517.4],
+    "RangeFe5192" : [519.0,520.5],
+    "RangeFe5234" : [523.0,524.0],
+    "RangeFe5275" : [526.8,528.2],
+    "RangeFe5316" : [531.0,532.2],
+    "RangeFe5362" : [535.8,536.7],
+    "RangeOIII8446" : [843.8,845.5],
+    "RangeHI8367" : [836.7,850.0],
+    "RangeHeI4122" : [411.5,412.7],
+    "RangeHeI4009" : [400.3,401.8],
+    "RangeHeI4026" : [400.0,405.0],
+    "RangeHeI4388" : [436.5,441.0],
+    "RangeHeII4545" : [451.5,456.5],
+    "RangeHeII4200" : [418.5,421.5],
+    "order_11" : [654,658],
+    "order_21" : [584,588],
+    "order_28" : [543,550],
+    "order_29" : [538,543],
+    "order_30" : [535,539],
+    "order_34" : [516,519.5],
+    "order_39" : [495,496],
+    "order_51" : [445,450],
+}
 
 # Define "Ranges" list based on user's choices from above.
+Rangelists = {
+    "specific" :[ waveranges[Order]],
+    "Hdelta" : [waveranges["RangeHd"]],
+    "Hgamma" : [waveranges["RangeHg"]],
+    "Hbeta" : [waveranges["RangeHb"]],
+    "Halpha" : [waveranges["RangeHa"]],
+    "Balmer" : [
+        waveranges["RangeHd"],
+        waveranges["RangeHg"],
+        waveranges["RangeHb"],
+        waveranges["RangeHa"]
+    ],
+    "Balmer_noHalpha" : [
+        waveranges["RangeHd"],
+        waveranges["RangeHg"],
+        waveranges["RangeHb"]
+    ],
+    "HeI" : [
+        waveranges["RangeHeI4009"],
+        waveranges["RangeHeI4026"],
+        waveranges["RangeHeI4122"],
+        waveranges["RangeHeI4144"],
+        waveranges["RangeHeI4388"],
+        waveranges["RangeHeI4472"]
+    ],
+    "HeI4472" : [waveranges["RangeHeI4472"]],
+    "HeI5878" : [waveranges["RangeHeI5878"]],
+    "HeI4144" : [waveranges["RangeHeI4144"]],
+    "HeII4200" :  [waveranges["RangeHeII4200"]],
+    "4120Region" : [waveranges["RangeHeI4144"]],
+    "IronEmission" : [
+        waveranges["RangeFe5168"],
+        waveranges["RangeFe5192"],
+        waveranges["RangeFe5275"],
+        waveranges["RangeFe5316"]
+    ],
+    "Fe4584" : [waveranges["RangeFe4584"]],
+    "Fe5168" : [waveranges["RangeFe5168"]],
+    "Fe5192" : [waveranges["RangeFe5192"]],
+    "Fe5234" : [waveranges["RangeFe5234"]],
+    "Fe5275" : [waveranges["RangeFe5275"]],
+    "Fe5316" : [waveranges["RangeFe5316"]],
+    "Fe5362" : [waveranges["RangeFe5362"]],
+    "OIII" : [waveranges["RangeOIIIJulia"]],
+    "OIII8446" : [waveranges["RangeOIII8446"]],
+    "HI8367" : [waveranges["RangeHI8367"]],
+    "HeI4122" : [waveranges["RangeHeI4122"]],
+    "HeI4009" : [waveranges["RangeHeI4009"]],
+    "HeI4026" : [waveranges["RangeHeI4026"]],
+    "HeI4388" : [waveranges["RangeHeI4388"]],
+    "HeII4546" : [waveranges["RangeHeII4545"]],
+    "AllHe" : [
+        waveranges["RangeHeI4026"],
+        waveranges["RangeHeII4200"],
+        waveranges["RangeHeI4472"],
+        waveranges["RangeHeII4545"]
+    ],
+    "AllHeI" : [
+        waveranges["RangeHeI4026"],
+        waveranges["RangeHeI4144"],
+        waveranges["RangeHeI4388"],
+        waveranges["RangeHeI4472"],
+        waveranges["RangeHeII4545"]
+    ],
+    "AllHeII" : [
+        waveranges["RangeHeII4200"],
+        waveranges["RangeHeII4545"]
+    ],
+    "Indiv" : [
+        waveranges["RangeHeII4200"], 
+        waveranges["RangeHeI4472"]
+    ]
+}
 
-if Rangestr == 'Hgamma':
-    Ranges = [RangeHg]
-elif Rangestr == 'Hbeta':
-    Ranges = [RangeHb]    
-elif Rangestr == 'Halpha':
-    Ranges = [RangeHa]   
-elif Rangestr == 'Balmer':
-    Ranges = [RangeHd, RangeHg, RangeHb, RangeHa]       
-elif Rangestr == 'Balmer_noHalpha':
-        Ranges = [RangeHd, RangeHg, RangeHb]    
-elif Rangestr == 'HeI':
-    Ranges = [RangeHeI4009, RangeHeI4026, RangeHeI4122, RangeHeI4144, RangeHeI4388, RangeHeI4472]      
-elif Rangestr == 'Hdelta':
-        Ranges = [RangeHd]   
-elif Rangestr == 'HeI4472':
-    Ranges = [RangeHeI4472]    
-elif Rangestr == 'HeI5878':
-    Ranges = [RangeHeI5878]    
-elif Rangestr == 'HeI4144':
-    Ranges = [RangeHeI4144]   
-elif Rangestr == 'HeII4200':
-    Ranges = [RangeHeII4200]          
-elif Rangestr == '4120Region':
-    Ranges = [RangeHeI4144]       
-elif Rangestr == 'IronEmission':   
-    Ranges = [RangeFe5168, RangeFe5192, RangeFe5275, RangeFe5316]           
-elif Rangestr == 'Fe4584':     
-    Ranges = [RangeFe4584] 
-elif Rangestr == 'Fe5168':     
-    Ranges = [RangeFe5168] 
-elif Rangestr == 'Fe5192':     
-    Ranges = [RangeFe5192] 
-elif Rangestr == 'Fe5234':     
-    Ranges = [RangeFe5234]     
-elif Rangestr == 'Fe5275':     
-    Ranges = [RangeFe5275]       
-elif Rangestr == 'Fe5316':     
-    Ranges = [RangeFe5316]     
-elif Rangestr == 'Fe5362':     
-    Ranges = [RangeFe5362]     
-elif Rangestr == 'OIII':
-    Ranges = [RangeOIIIJulia]        
-elif Rangestr == 'OIII8446':
-    Ranges = [RangeOIII8446]    
-elif Rangestr == 'HI8367':
-    Ranges = [RangeHI8367]        
-elif Rangestr == 'HeI4122':
-    Ranges = [RangeHeI4122]   
-elif Rangestr == 'HeI4009':
-    Ranges = [RangeHeI4009]       
-elif Rangestr == 'HeI4026':
-    Ranges = [RangeHeI4026]        
-elif Rangestr == 'HeI4388':
-    Ranges = [RangeHeI4388]            
-elif Rangestr == 'HeII4546':
-    Ranges = [RangeHeII4545]  
-elif Rangestr == 'AllHe':
-    Ranges = [RangeHeI4026, RangeHeII4200, RangeHeI4472, RangeHeII4545]             
-elif Rangestr == 'AllHeI':
-    #Ranges = [RangeHeI4026, RangeHeI4388, RangeHeI4472]     
-    Ranges = [RangeHeI4026, RangeHeI4144, RangeHeI4388, RangeHeI4472, RangeHeII4545]         
-elif Rangestr == 'AllHeII':
-    Ranges = [RangeHeII4200, RangeHeII4545]          
-elif Rangestr == 'Indiv':
-    Ranges = [RangeHeII4200, RangeHeI4472]            
+Ranges = Rangelists[Rangestr]
 
 
-
-                                
-         
 ################################
 ##### Fancy options   ##########
 ################################     
