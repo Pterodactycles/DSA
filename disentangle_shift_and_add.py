@@ -67,7 +67,7 @@ for i, filepath in enumerate(specnames):
         header = fits.getheader(filepath)
         MJDs = np.append(MJDs, header[MJDHeader])
 # read_file returns a 2D array of waves vs. flux for given file path. User can edit "read_file" function if needed.
-    spec = read_file(filepath)
+    spec = read_file(filepath, SkipLines=1)
 # Small script for cleaning spectra of cosmics; use at own risk!
     if CleanCos:
         print("Cleaning Cosmics...")
@@ -80,10 +80,10 @@ for i, filepath in enumerate(specnames):
     else:
         SpecNorm= np.copy(SpecClean)
     ObsSpecs.append(SpecNorm)
-# Compute S2N of spectrum in prespecified range    
+# Compute S2N of spectrum in prespecified range
     waves = SpecNorm[:,0]
     fluxes = SpecNorm[:,1]
-    S2Nrange  = (waves > S2Nblue) * (waves < S2Nred)  
+    S2Nrange  = (waves > S2Nblue) * (waves < S2Nred)
     S2Ns.append(1./np.std(spec[S2Nrange,1]))
 
 S2Ns = np.array(S2Ns)
@@ -250,8 +250,10 @@ if NebLines:
 
 
 if CompNum==2:
-    np.savetxt('Output/ADIS_lguess2_K1K2=' + str(lguessVec[1]) + '_' + str(Orbital_Params['K1']) + '_' +  str(Orbital_Params['K2']) + '.txt', np.c_[wavegridall, A])
-    np.savetxt('Output/BDIS_lguess2_K1K2=' + str(lguessVec[1]) + '_' + str(Orbital_Params['K1']) + '_' + str(Orbital_Params['K2']) + '.txt', np.c_[wavegridall, B])
+    # np.savetxt('Output/ADIS_lguess2_K1K2=' + str(lguessVec[1]) + '_' + str(Orbital_Params['K1']) + '_' +  str(Orbital_Params['K2']) + '.txt', np.c_[wavegridall, A])
+    # np.savetxt('Output/BDIS_lguess2_K1K2=' + str(lguessVec[1]) + '_' + str(Orbital_Params['K1']) + '_' + str(Orbital_Params['K2']) + '.txt', np.c_[wavegridall, B])
+    np.savetxt(f'{Output_dir}/adis.txt', np.c_[wavegridall, A])
+    np.savetxt(f'{Output_dir}/bdis.txt', np.c_[wavegridall, B])
 elif CompNum==3:
     np.savetxt('Output/ADIS_lguess2_lguess3_K1K2KOut=' + str(lguessVec[1]) + '_'  + str(lguessVec[2]) + '_' + str(Orbital_Params['K1']) + '_' +  str(Orbital_Params['K2']) +'_' +  str(Orbital_Params['KOut'])  +   '.txt', np.c_[wavegridall, A])
     np.savetxt('Output/BDIS_lguess2_lguess3_K1K2KOut=' + str(lguessVec[1]) + '_'  + str(lguessVec[2]) + '_' + str(Orbital_Params['K1']) + '_' +  str(Orbital_Params['K2']) +'_' +  str(Orbital_Params['KOut'])  +   '.txt', np.c_[wavegridall, B])

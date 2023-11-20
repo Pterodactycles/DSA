@@ -184,16 +184,16 @@ def Chi2con(redchi2, nu, Kscomp, Rangestr, P1=0.68, comp='secondary', ParbSize =
     plt.legend()
     if comp=='secondary':
         plt.xlabel(r'$K_2$ [km/s]')
-        np.savetxt('Output/' + Rangestr + '_' + 'grid_dis_K2.txt', np.c_[Kscomp, redchi2], header='#1sigma = ' + str(chi2P1*ParbMin))     
-        plt.savefig('Output/' +  Rangestr +  '_Grid_disentangling_K2.pdf', bbox_inches='tight')        
+        np.savetxt('disentangled/' + Rangestr + '_' + 'grid_dis_K2.txt', np.c_[Kscomp, redchi2], header='#1sigma = ' + str(chi2P1*ParbMin))     
+        plt.savefig('disentangled/' +  Rangestr +  '_Grid_disentangling_K2.pdf', bbox_inches='tight')        
     elif comp=='primary':
         plt.xlabel(r'$K_1$ [km/s]')        
-        np.savetxt('Output/' + Rangestr + '_' + 'grid_dis_K1.txt', np.c_[Kscomp, redchi2], header='#1sigma = ' + str(chi2P1*ParbMin))    
-        plt.savefig('Output/' + Rangestr +  '_Grid_disentangling_K1.pdf', bbox_inches='tight')        
+        np.savetxt('disentangled/' + Rangestr + '_' + 'grid_dis_K1.txt', np.c_[Kscomp, redchi2], header='#1sigma = ' + str(chi2P1*ParbMin))    
+        plt.savefig('disentangled/' + Rangestr +  '_Grid_disentangling_K1.pdf', bbox_inches='tight')        
     elif comp=='tertiary':
         plt.xlabel(r'$K_3$ [km/s]')        
-        np.savetxt('Output/' + Rangestr + '_' + 'grid_dis_K3.txt', np.c_[Kscomp, redchi2], header='#1sigma = ' + str(chi2P1*ParbMin))    
-        plt.savefig('Output/' + Rangestr +  '_Grid_disentangling_K3.pdf', bbox_inches='tight')       
+        np.savetxt('disentangled/' + Rangestr + '_' + 'grid_dis_K3.txt', np.c_[Kscomp, redchi2], header='#1sigma = ' + str(chi2P1*ParbMin))    
+        plt.savefig('disentangled/' + Rangestr +  '_Grid_disentangling_K3.pdf', bbox_inches='tight')       
     else:
         sys.exit("type of companion not defined -- error in subroutine Chi2con...")        
     plt.show()    
@@ -304,14 +304,14 @@ def Prepare_Plot_Extremes(fig, axes, waves, SpecShiftArr, Nebshift, ObsSpec, spe
         plt.tight_layout()    
         if len(SpecShiftArr)==2:
             try:
-                NameFile =  'Output/' + StarName + '_' + Rangestr + '_Extremes_' + str(np.round(KNowArr[0])) + '_' + str(np.round(KNowArr[1])) + '.pdf'   
+                NameFile =  'disentangled/' + StarName + '_' + Rangestr + '_Extremes_' + str(np.round(KNowArr[0])) + '_' + str(np.round(KNowArr[1])) + '.pdf'   
                 plt.savefig(NameFile, bbox_inches='tight')                                       
             except:
-                NameFile =  'Output/' + StarName + '_' + Rangestr + '_Extremes_' + str(np.round(Orbital_Params['K1'])) + '_' + str(np.round(K2s[kcount])) + '.pdf'   
+                NameFile =  'disentangled/' + StarName + '_' + Rangestr + '_Extremes_' + str(np.round(Orbital_Params['K1'])) + '_' + str(np.round(K2s[kcount])) + '.pdf'   
                 plt.savefig(NameFile, bbox_inches='tight')   
         elif len(SpecShiftArr)==3:
             try:
-                NameFile =  'Output/' + StarName + '_' + Rangestr + '_Extremes_' + str(np.round(KNowArr[0])) + '_' + str(np.round(KNowArr[1])) + '_' + str(np.round(KNowArr[2])) +  '.pdf'   
+                NameFile =  'disentangled/' + StarName + '_' + Rangestr + '_Extremes_' + str(np.round(KNowArr[0])) + '_' + str(np.round(KNowArr[1])) + '_' + str(np.round(KNowArr[2])) +  '.pdf'   
                 plt.savefig(NameFile, bbox_inches='tight')                                       
             except:
                 sys.error("No idea why this should fail... Maybe you do? Existing 'Prepare_Plot_Extremes' routine")           
@@ -793,7 +793,7 @@ def Grid_disentangling2D(waveRanges, nusdata, Bini, Orbital_Params, K1s, K2s,  O
         StepSize2 = K2s[1] - K2s[0]
     except:
         StepSize2 = 0        
-    np.savetxt('Output/' + Rangestr + '_' + 'grid_dis_K1K2.txt', np.array(Diffs), header='#K1min, K2min, stepK1, stepK2, DoF = ' + str(K1s[0]) + ', ' + str(K2s[0]) + ', ' + str(StepSize1) + ', ' + str(StepSize2)   + ', ' + str(DoFs) ) 
+    np.savetxt('disentangled/' + Rangestr + '_' + 'grid_dis_K1K2.txt', np.array(Diffs), header='#K1min, K2min, stepK1, stepK2, DoF = ' + str(K1s[0]) + ', ' + str(K2s[0]) + ', ' + str(StepSize1) + ', ' + str(StepSize2)   + ', ' + str(DoFs) ) 
     k1min, k2min = np.argwhere(Diffs == np.min(Diffs))[0]
     #print Diffs
     print("True velocities: ", k1min, k2min, K1s[k1min], K2s[k2min])
@@ -867,10 +867,10 @@ def Grid_disentangling3D(waveRanges, nusdata, nusdataOut, Bini, Orbital_Params, 
     PickleHeader = {'KsMin': [K1s[0], K2s[0], KOuts[0]],
                     'Steps': [StepSize1, StepSize2, StepSize3],
                     'DoF' : DoFs }
-    Chi2FileName = 'Output/' + Rangestr + '_' + 'grid_dis_K1K2K3.pkl'
+    Chi2FileName = 'disentangled/' + Rangestr + '_' + 'grid_dis_K1K2K3.pkl'
     pickle.dump(PickleHeader, open(Chi2FileName, 'wb'))
     pickle.dump(Diffs, open(Chi2FileName, 'wb'))
-    #np.savetxt('Output/' + Rangestr + '_' + 'grid_dis_K1K2K3.txt', (np.array(Diffs))., header='#K1min, K2min, K3min, stepK1, stepK2, stepK3, DoF = ' + str(K1s[0]) + ', ' + str(K2s[0]) + ', ' + ', ' + str(KOuts[0]) +  ', ' + str(StepSize1) + ', ' + str(StepSize2)   + ', ' + str(StepSize3) + ', ' + str(DoFs) )     
+    #np.savetxt('disentangled/' + Rangestr + '_' + 'grid_dis_K1K2K3.txt', (np.array(Diffs))., header='#K1min, K2min, K3min, stepK1, stepK2, stepK3, DoF = ' + str(K1s[0]) + ', ' + str(K2s[0]) + ', ' + ', ' + str(KOuts[0]) +  ', ' + str(StepSize1) + ', ' + str(StepSize2)   + ', ' + str(StepSize3) + ', ' + str(DoFs) )     
     k1min, k2min, kOutmin = np.argwhere(Diffs == np.min(Diffs))[0]
     #print Diffs
     print("True velocities: ", k1min, k2min, kOutmin, K1s[k1min], K2s[k2min], KOuts[kOutmin] )
