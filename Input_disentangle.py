@@ -143,8 +143,8 @@ continuumdictionary = {
         "S2Nred" : 516
     },
     "order_39" : {
-        "S2Nblue" : 495.5,
-        "S2Nred" : 496
+        "S2Nblue" : 496.0,
+        "S2Nred" : 496.45
     },
     "order_51" : {
         "S2Nblue" : 448,
@@ -259,7 +259,7 @@ PosLimCondNeb = np.array([
 # Highly recommended for sanity checks and presentation in papers.
 # The plot is shown for the K1, K2 pair most closely matching (Velo_plot_usrK1_ext, Velo_plot_usrK2_ext, ...) given by the user.
 # Recommended: True
-PLOTEXTREMES = True
+PLOTEXTREMES = False
 Velo_plot_usrK1_ext =  Orbital_Params['K1']
 Velo_plot_usrK2_ext=  Orbital_Params['K2']
 Velo_plot_usrK3_ext=  Orbital_Params['KOut']

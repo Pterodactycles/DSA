@@ -237,8 +237,8 @@ plt.plot(wavegridall, B, label='dis B')
 if CompNum>=3:
     C = (C-1)/lguessVec[2] + 1.
     plt.plot(wavegridall, C, label='dis C')
-if CompNum==4:
-    D = (D-1)/lguessVec[3] + 1.
+# if CompNum==4:
+#     D = (D-1)/lguessVec[3] + 1.
 
 
 
