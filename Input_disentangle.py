@@ -259,7 +259,7 @@ PosLimCondNeb = np.array([
 # Highly recommended for sanity checks and presentation in papers.
 # The plot is shown for the K1, K2 pair most closely matching (Velo_plot_usrK1_ext, Velo_plot_usrK2_ext, ...) given by the user.
 # Recommended: True
-PLOTEXTREMES = False
+PLOTEXTREMES = True
 Velo_plot_usrK1_ext =  Orbital_Params['K1']
 Velo_plot_usrK2_ext=  Orbital_Params['K2']
 Velo_plot_usrK3_ext=  Orbital_Params['KOut']
